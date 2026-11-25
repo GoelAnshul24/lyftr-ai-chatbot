@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    environment:
+      # Fixed here so the database always lives on the named volume.
+      DATABASE_URL: sqlite:////data/app.db
+      PORT: ${PORT:-8000}
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    volumes:
+      - app-data:/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Build-time: the browser calls the backend at this URL.
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  app-data:

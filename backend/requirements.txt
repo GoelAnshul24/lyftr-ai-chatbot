@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+litellm
+pydantic
+pytest
+httpx
+python-dotenv
+orjson
